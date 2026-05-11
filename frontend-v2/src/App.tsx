@@ -10,10 +10,11 @@ import {
   BookDetail,
 } from "./pages";
 
+import {routes } from "./lib/routes";
 const App: React.FC = () => {
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
+      <Route path= {routes.home()} element={<Home />} />
       <Route path="/books/create" element={<CreateBooks />} />
       <Route path="/books/details/:id" element={<ShowBook />} />
       <Route path="/books/:id" element={<BookDetail />} />
