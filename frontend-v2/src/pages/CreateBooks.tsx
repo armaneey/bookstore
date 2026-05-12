@@ -1,137 +1,157 @@
-import React, { useState } from "react";
+import React from "react";
 import { useBooks } from "@/hooks/useBooks";
 import { useNavigate } from "react-router-dom";
+import { useForm } from "@mantine/form";
+import { FaPlus } from "react-icons/fa6";
+import {routes} from "../lib/routes";
+import { z } from "zod";
+import { 
+  Button, 
+  TextInput, 
+  Box, 
+  Stack, 
+  Title, 
+  Paper, 
+  Text, 
+  Group 
+} from "@mantine/core";
+import { zodResolver } from "mantine-form-zod-resolver";
+import { notifications } from "@mantine/notifications";
+
+// Form validation schema
+const bookSchema = z.object({
+  title: z
+    .string()
+    .min(1, "Title is required")
+    .max(100, "Title must be less than 100 characters"),
+  author: z
+    .string()
+    .min(1, "Author is required")
+    .max(100, "Author must be less than 100 characters"),
+  publishYear: z
+     .string()
+      .min(1, "Year must not be empty")
+
+});
+
+type BookFormData = z.infer<typeof bookSchema>;
 
 const CreateBooks: React.FC = () => {
-  const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
-  const [publishYear, setPublishYear] = useState("");
-  const { createBook } = useBooks();
   const navigate = useNavigate();
+  const { createBook } = useBooks();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!title || !author || !publishYear) {
-      alert("Please fill in all fields");
-      return;
-    }
+  // Form setup with validation
+  const form = useForm<BookFormData>({
+    validate: zodResolver(bookSchema),
+    initialValues: {
+      title: "",
+      author: "",
+      publishYear: "",
+    },
+    validateInputOnBlur: true,
+    validateInputOnChange: true,
 
-    createBook.mutate(
-      { title, author, publishYear },
-      {
-        onSuccess: () => {
-          alert("Book created successfully");
-          navigate("/");
-        },
-        onError: (error) => {
-          alert("Failed to create book");
-          console.error(error);
-        },
-      }
-    );
+  });
+
+  // Handle form submission
+  const handleSubmit = (values: BookFormData) => {
+    form.validate ();
+    createBook.mutate(values, {
+      onSuccess: () => {
+        notifications.show({
+          title: "Success",
+          message: "Book created successfully",
+          color: "green",
+        });
+        navigate(routes.home());
+
+      },
+      onError: (error) => {
+        notifications.show({
+          title: "Error",
+          message: "Failed to create book",
+          color: "red",
+        });
+        console.error(error);
+      },
+    });
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-slate-200 py-8">
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
         <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-4 mb-6">
           <div className="flex items-center justify-between">
-            <button
-              onClick={() => navigate("/")}
-              className="group px-4 py-2.5 text-slate-700 hover:bg-slate-50 rounded-xl transition-all duration-300 flex items-center gap-2 font-medium"
-            >
-              <svg className="w-5 h-5 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+            <Button
+              variant="subtle"
+              onClick={() => navigate(routes.home())}
+              leftSection={
+                <svg 
+                  className="w-5 h-5" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24">
+                  <path 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    strokeWidth={2} 
+                    d="M10 19l-7-7m0 0l7-7m-7 7h18"   />
+                </svg>  } >
               Back to Library
-            </button>
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-900 to-slate-800 bg-clip-text text-transparent">Create New Book</h1>
+            </Button>
+            <Title order={1}>Create New Book</Title>
           </div>
         </div>
 
-        {/* Form */}
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden">
-          {/* Hero */}
-          <div className="bg-gradient-to-r from-blue-900 via-blue-800 to-slate-800 p-6 text-white border-b-2 border-yellow-500/50">
-            <div className="flex items-center gap-4">
-              <div className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center border border-white/30">
-                <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
-              </div>
-              <div>
-                <h2 className="text-xl font-bold">Add a New Book</h2>
-                <p className="text-blue-100 text-sm">Fill in the details to add to your collection</p>
-              </div>
-            </div>
-          </div>
+        <Paper shadow="xl" withBorder p={0}>
+          <Box p={24}>
+            <form onSubmit={form.onSubmit(handleSubmit)}>
+              <Stack gap="lg">
+                <Title order={2} mb="md">Add a New Book</Title>
+                <Text c="dimmed" size="sm" mb="lg">
+                  Fill in the details below to add a new book to your collection
+                </Text>
+                
+                <TextInput
+                  withAsterisk
+                  label="Book Title"
+                  placeholder="Enter the book title"
+                  {...form.getInputProps('title')}/>
+                <TextInput
+                  withAsterisk
+                  label="Author"
+                  placeholder="Enter the author's name"
+                  {...form.getInputProps('author')}   />
 
-          <form onSubmit={handleSubmit} className="p-6 space-y-6">
-            <div>
-              <label className="block text-sm font-semibold text-slate-800 mb-2">Book Title</label>
-              <input
-                type="text"
-                placeholder="Enter book title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                required
-                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-600 focus:bg-white transition-all duration-300"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-slate-800 mb-2">Author</label>
-              <input
-                type="text"
-                placeholder="Enter author name"
-                value={author}
-                onChange={(e) => setAuthor(e.target.value)}
-                required
-                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-600 focus:bg-white transition-all duration-300"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-slate-800 mb-2">Publish Year</label>
-              <input
-                type="number"
-                placeholder="Enter publish year"
-                value={publishYear}
-                onChange={(e) => setPublishYear(e.target.value)}
-                required
-                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-600 focus:bg-white transition-all duration-300"
-              />
-            </div>
-
-            <div className="flex gap-4 pt-4 border-t border-slate-200">
-              <button
-                type="button"
-                onClick={() => navigate("/")}
-                className="flex-1 px-4 py-3 bg-white border border-slate-200 text-slate-700 rounded-xl hover:bg-slate-50 transition-all duration-300 font-medium"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                disabled={createBook.isPending}
-                className="flex-1 px-4 py-3 bg-gradient-to-r from-blue-900 via-blue-800 to-slate-800 text-white rounded-xl hover:from-blue-800 hover:via-blue-700 hover:to-slate-700 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 font-semibold shadow-lg shadow-blue-900/30 hover:shadow-xl border border-yellow-500/40"
-              >
-                {createBook.isPending ? (
-                  <>
-                    <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" /></svg>
-                    Creating...
-                  </>
-                ) : (
-                  <>
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                <TextInput
+                  withAsterisk
+                  label="Publish Year"
+                  placeholder="Enter the publish year e.g 2022"
+                  {...form.getInputProps('publishYear')}
+                  />
+                <Group justify="flex-end" mt="xl">
+                  <Button
+                    variant="subtle"
+                    onClick={() => navigate(routes.home())}   >
+                    Cancel
+                  </Button>
+                  <Button
+                  onClick={() => handleSubmit(form.values)}
+                    type="submit"
+                    loading={createBook.isPending}
+                    leftSection={
+                      <FaPlus /> } >
                     Create Book
-                  </>
-                )}
-              </button>
-            </div>
-          </form>
-        </div>
+                  </Button>
+                </Group>
+              </Stack>
+            </form>
+          </Box>
+        </Paper>
       </div>
     </div>
   );
 };
 
 export default CreateBooks;
+
