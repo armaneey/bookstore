@@ -81,8 +81,8 @@ const Home: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="bg-white rounded-2xl shadow-xl border border-slate-100/80 p-6 mb-6 animate-fade-in-up backdrop-blur-sm">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+          <div className="flex flex-col gap-3 lg:flex-row items-center justify-between w-full">
+            <div className="flex items-center gap-4 w-full">
               <div className="w-14 h-14 bg-gradient-to-br from-blue-900 via-blue-800 to-slate-900 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-900/30 animate-float">
                 <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
               </div>
@@ -91,12 +91,12 @@ const Home: React.FC = () => {
                 <p className="text-sm text-slate-500 mt-1 font-medium">{books.length} books in your library</p>
               </div>
             </div>
-            <div className="flex gap-3">
+            <div className="flex gap-3 flex-col lg:flex-row w-full lg:justify-end">
               <a href="/books/search" className="group px-4 py-2.5 bg-white border border-blue-200 rounded-xl text-blue-900 hover:bg-blue-50 hover:border-blue-400 hover:shadow-md transition-all duration-300 flex items-center gap-2 font-medium">
                 <svg className="w-4 h-4 text-blue-600 group-hover:text-blue-700 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                 Search
               </a>
-              <a href="/books/create" className="group px-4 py-2.5 bg-gradient-to-r from-blue-900 via-blue-800 to-slate-800 text-white rounded-xl hover:from-blue-800 hover:via-blue-700 hover:to-slate-700 transition-all duration-300 shadow-lg shadow-blue-900/30 hover:shadow-xl hover:shadow-blue-900/40 hover:-translate-y-0.5 flex items-center gap-2 font-medium border border-yellow-500/50">
+              <a href="/books/create" className="group px-4 py-2.5 bg-gradient-to-r from-blue-900 via-blue-800 to-slate-800 text-white rounded-xl hover:from-blue-800 hover:via-blue-700 hover:to-slate-700 transition-all duration-300 shadow-lg shadow-blue-900/30 hover:shadow-xl hover:shadow-blue-900/40 hover:-translate-y-0.5 flex items-center gap-2 font-medium border border-yellow-500/50 justify-center">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
                 Add Book
               </a>
