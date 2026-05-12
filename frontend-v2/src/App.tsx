@@ -15,12 +15,12 @@ const App: React.FC = () => {
   return (
     <Routes>
       <Route path= {routes.home()} element={<Home />} />
-      <Route path="/books/create" element={<CreateBooks />} />
-      <Route path="/books/details/:id" element={<ShowBook />} />
-      <Route path="/books/:id" element={<BookDetail />} />
-      <Route path="/books/edit/:id" element={<EditBook />} />
-      <Route path="/books/delete/:id" element={<DeleteBook />} />
-      <Route path="/books/search" element={<FindBook />} />
+      <Route path= {routes.createBooks()} element={<CreateBooks />} />
+      <Route path= {routes.detailsBooks()}element={<ShowBook />} />
+      <Route path= {routes.books()}element={<BookDetail />} />
+      <Route path= {routes.editBook()} element={<EditBook />} />
+      <Route path= {routes.deletesBooks()}element={<DeleteBook />} />
+      <Route path= {routes.searchBooks()} element={<FindBook />} />
     </Routes>
   );
 };
