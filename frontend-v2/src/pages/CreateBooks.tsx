@@ -1,4 +1,5 @@
 import React from "react";
+import React from "react";
 import { useBooks } from "@/hooks/useBooks";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "@mantine/form";
@@ -38,6 +39,7 @@ const bookSchema = z.object({
 type BookFormData = z.infer<typeof bookSchema>;
 
 const CreateBooks: React.FC = () => {
+  const navigate = useNavigate();
   const navigate = useNavigate();
   const { createBook } = useBooks();
 
@@ -98,6 +100,8 @@ const CreateBooks: React.FC = () => {
               Back to Library
             </Button>
             <Title order={1}>Create New Book</Title>
+            </Button>
+            <Title order={1}>Create New Book</Title>
           </div>
         </div>
 
@@ -153,10 +157,17 @@ const CreateBooks: React.FC = () => {
             </form>
           </Box>
         </Paper>
+                  </Button>
+                </Group>
+              </Stack>
+            </form>
+          </Box>
+        </Paper>
       </div>
     </div>
   );
 };
 
 export default CreateBooks;
+
 
