@@ -2,8 +2,6 @@ import React from "react";
 import { useBooks } from "@/hooks/useBooks";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "@mantine/form";
-import { FaPlus } from "react-icons/fa6";
-import {routes} from "../lib/routes";
 import { z } from "zod";
 import { 
   Button, 
@@ -15,8 +13,10 @@ import {
   Text, 
   Group 
 } from "@mantine/core";
-import { zodResolver } from "mantine-form-zod-resolver";
+import { zodResolver } from 'mantine-form-zod-resolver';
 import { notifications } from "@mantine/notifications";
+import { routes } from "@/lib/routes";
+import { FaPlus } from "react-icons/fa";
 
 // Form validation schema
 const bookSchema = z.object({
@@ -29,9 +29,10 @@ const bookSchema = z.object({
     .min(1, "Author is required")
     .max(100, "Author must be less than 100 characters"),
   publishYear: z
-     .string()
-      .min(1, "Year must not be empty")
-
+    .string()
+    .min(4, "Year must be at least 4 digits")
+    .max(4, "Year must be exactly 4 digits")
+    .regex(/^\d{4}$/, "Year must be a valid 4-digit year"),
 });
 
 type BookFormData = z.infer<typeof bookSchema>;
@@ -46,16 +47,12 @@ const CreateBooks: React.FC = () => {
     initialValues: {
       title: "",
       author: "",
-      publishYear: "",
+      publishYear: new Date().getFullYear().toString(),
     },
-    validateInputOnBlur: true,
-    validateInputOnChange: true,
-
   });
 
   // Handle form submission
   const handleSubmit = (values: BookFormData) => {
-    form.validate ();
     createBook.mutate(values, {
       onSuccess: () => {
         notifications.show({
@@ -63,8 +60,7 @@ const CreateBooks: React.FC = () => {
           message: "Book created successfully",
           color: "green",
         });
-        navigate(routes.home());
-
+        navigate("/");
       },
       onError: (error) => {
         notifications.show({
@@ -95,8 +91,10 @@ const CreateBooks: React.FC = () => {
                     strokeLinecap="round" 
                     strokeLinejoin="round" 
                     strokeWidth={2} 
-                    d="M10 19l-7-7m0 0l7-7m-7 7h18"   />
-                </svg>  } >
+                    d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+              }
+            >
               Back to Library
             </Button>
             <Title order={1}>Create New Book</Title>
@@ -116,31 +114,38 @@ const CreateBooks: React.FC = () => {
                   withAsterisk
                   label="Book Title"
                   placeholder="Enter the book title"
-                  {...form.getInputProps('title')}/>
+                  key={form.key('title')}
+                  {...form.getInputProps('title')}
+                />
+                
                 <TextInput
                   withAsterisk
                   label="Author"
                   placeholder="Enter the author's name"
-                  {...form.getInputProps('author')}   />
+                  key={form.key('author')}
+                  {...form.getInputProps('author')}
+                />
 
                 <TextInput
                   withAsterisk
                   label="Publish Year"
                   placeholder="Enter the publish year e.g 2022"
+                  key={form.key('publishYear')}
                   {...form.getInputProps('publishYear')}
-                  />
+                />
+                
                 <Group justify="flex-end" mt="xl">
                   <Button
                     variant="subtle"
-                    onClick={() => navigate(routes.home())}   >
+                    onClick={() => navigate(routes.home())}
+                  >
                     Cancel
                   </Button>
                   <Button
-                  onClick={() => handleSubmit(form.values)}
                     type="submit"
                     loading={createBook.isPending}
-                    leftSection={
-                      <FaPlus /> } >
+                    leftSection={<FaPlus />}
+                  >
                     Create Book
                   </Button>
                 </Group>
